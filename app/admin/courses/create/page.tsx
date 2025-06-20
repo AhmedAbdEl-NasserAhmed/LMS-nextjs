@@ -1,5 +1,6 @@
 "use client";
 
+import TextEditor from "@/components/textEditor/textEditor";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Card,
@@ -152,11 +153,7 @@ const CreatCourse = () => {
                   <FormItem className="w-full">
                     <FormLabel>Description</FormLabel>
                     <FormControl>
-                      <Textarea
-                        className="min-h-[120px]"
-                        placeholder="Description"
-                        {...field}
-                      />
+                      <TextEditor field={field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
