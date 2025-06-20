@@ -32,8 +32,6 @@ export default function DropDownMenuComponent({
   userName: string;
   image: string;
 }) {
-  const { data: session } = authClient.useSession();
-
   const router = useRouter();
 
   async function signOut() {
