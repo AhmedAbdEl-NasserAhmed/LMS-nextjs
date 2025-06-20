@@ -7,6 +7,7 @@ import {
   CardHeader,
   CardTitle
 } from "@/components/ui/card";
+import { authClient } from "@/lib/auth-client";
 
 import Link from "next/link";
 
@@ -44,6 +45,8 @@ const features: featureProps[] = [
 ];
 
 export default function Home() {
+  const { data: session } = authClient.useSession();
+
   return (
     <>
       <section className="reltive py-20">
@@ -65,15 +68,17 @@ export default function Home() {
             >
               Explore Courses
             </Link>
-            <Link
-              href="/login"
-              className={buttonVariants({
-                size: "lg",
-                variant: "outline"
-              })}
-            >
-              Sign in
-            </Link>
+            {!session && (
+              <Link
+                href="/login"
+                className={buttonVariants({
+                  size: "lg",
+                  variant: "outline"
+                })}
+              >
+                Sign in
+              </Link>
+            )}
           </div>
         </div>
       </section>
