@@ -41,8 +41,15 @@ export function Navbar() {
               <>
                 <DropDownMenuComponent
                   email={session.user.email}
-                  userName={session.user.name}
-                  image={session.user.image || ""}
+                  userName={
+                    session?.user.name && session.user.name.length > 0
+                      ? session?.user.name
+                      : session?.user.email.split("@")[0]
+                  }
+                  image={
+                    session.user.image ||
+                    `https://avatar.vercel.sh/${session?.user.email}`
+                  }
                 />
               </>
             ) : (

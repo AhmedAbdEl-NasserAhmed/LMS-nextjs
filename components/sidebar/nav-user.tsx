@@ -78,7 +78,7 @@ export function NavUser() {
                 <span className="truncate font-medium">
                   {session?.user.name && session.user.name.length > 0
                     ? session?.user.name
-                    : session?.user.email.split("@")[0]}
+                    : session?.user.email}
                 </span>
                 <span className="text-muted-foreground truncate text-xs">
                   {session?.user.email}
