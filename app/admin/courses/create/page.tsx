@@ -1,5 +1,6 @@
 "use client";
 
+import Uploader from "@/components/file-uploader/Uploader";
 import TextEditor from "@/components/textEditor/textEditor";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
@@ -166,7 +167,7 @@ const CreatCourse = () => {
                   <FormItem className="w-full">
                     <FormLabel> Thumbnail Image</FormLabel>
                     <FormControl>
-                      <Input placeholder="Thumbnail url" {...field} />
+                      <Uploader />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
