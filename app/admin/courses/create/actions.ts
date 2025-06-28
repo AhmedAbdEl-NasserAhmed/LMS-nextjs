@@ -1,18 +1,45 @@
 "use server";
 
-import { auth } from "@/lib/auth";
+import arcjet, { detectBot, fixedWindow } from "@/lib/arcjet";
+import { requireAdmin } from "@/lib/dal";
 import { prisma } from "@/lib/db";
 import { ApiResponse } from "@/lib/type";
 import { courseSchema, courseSchemaType } from "@/lib/zodSchema";
-import { headers } from "next/headers";
+import { request } from "@arcjet/next";
+import { NextResponse } from "next/server";
+
+const aj = arcjet
+  .withRule(
+    detectBot({
+      mode: "LIVE",
+      allow: []
+    })
+  )
+  .withRule(
+    fixedWindow({
+      mode: "LIVE",
+      window: "1m",
+      max: 5
+    })
+  );
 
 export async function CreateCourse(
   values: courseSchemaType
 ): Promise<ApiResponse> {
+  const session = await requireAdmin();
   try {
-    const session = await auth.api.getSession({
-      headers: await headers()
+    const req = await request();
+
+    const decision = await arcjet.protect(req, {
+      fingerprint: session?.user.id as string
     });
+
+    if (decision.isDenied()) {
+      return {
+        status: "Error",
+        message: "Not Allowed"
+      };
+    }
 
     const validataion = courseSchema.safeParse(values);
     if (!validataion.success) {

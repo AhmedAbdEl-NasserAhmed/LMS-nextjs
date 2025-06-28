@@ -1,13 +1,39 @@
+import arcjet, { detectBot, fixedWindow } from "@/lib/arcjet";
+import { requireAdmin } from "@/lib/dal";
 import { env } from "@/lib/env";
-import { PutObjectCommand } from "@aws-sdk/client-s3";
-import { NextResponse } from "next/server";
-
 import { S3 } from "@/lib/S3Client";
 import { fileUploadSchema } from "@/lib/zodSchema";
+import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { NextResponse } from "next/server";
+
+const aj = arcjet
+  .withRule(
+    detectBot({
+      mode: "LIVE",
+      allow: []
+    })
+  )
+  .withRule(
+    fixedWindow({
+      mode: "LIVE",
+      window: "1m",
+      max: 5
+    })
+  );
 
 export async function POST(request: Request) {
+  const session = await requireAdmin();
+
   try {
+    const decision = await aj.protect(request, {
+      fingerprint: session?.user.id as string
+    });
+
+    if (decision.isDenied()) {
+      return NextResponse.json({ error: "Not Allowed" }, { status: 429 });
+    }
+
     const body = await request.json();
 
     const validation = fileUploadSchema.safeParse(body);
