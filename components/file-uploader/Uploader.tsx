@@ -1,10 +1,14 @@
-import React, { useCallback, useState } from "react";
-import { FileRejection, useDropzone } from "react-dropzone";
-import { Card, CardContent } from "../ui/card";
 import { cn } from "@/lib/utils";
-import { RenderErrorState, RenderState } from "./RenderState";
+import { useCallback, useEffect, useState } from "react";
+import { FileRejection, useDropzone } from "react-dropzone";
 import { toast } from "sonner";
-import { boolean } from "zod";
+import { Card, CardContent } from "../ui/card";
+import {
+  RenderErrorState,
+  RenderState,
+  RenderUploadedState,
+  RenderUploadingState
+} from "./RenderState";
 
 interface UploaderState {
   id: string | null;
@@ -29,40 +33,185 @@ const Uploader = () => {
     fileType: "image"
   });
 
-  function uploadFile(file: File) {
+  async function uploadFile(file: File) {
     setFileState((prev) => ({
       ...prev,
-      id: crypto.randomUUID().substring(10),
-      file,
       uploadingState: true,
       progress: 0
     }));
 
     try {
+      const preSignedResponse = await fetch("/api/s3/upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fileName: file.name,
+          contentType: file.type,
+          size: file.size,
+          isImage: true
+        })
+      });
 
+      if (!preSignedResponse.ok) {
+        toast.error("Failed to get presigned URL");
+        setFileState((prev) => ({
+          ...prev,
+          uploadingState: false,
+          error: true,
+          progress: 0
+        }));
+        return;
+      }
 
+      const { Key, presignedurl } = await preSignedResponse.json();
 
+      await new Promise<void>((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.upload.onprogress = (event) => {
+          if (event.lengthComputable) {
+            const perecentageCompleted = (event.loaded / event.total) * 100;
+            setFileState((prev) => ({
+              ...prev,
+              uploadingState: true,
+              progress: Math.round(perecentageCompleted)
+            }));
+          }
+        };
+        xhr.onload = () => {
+          if (xhr.status === 200 || xhr.status === 204) {
+            setFileState((prev) => ({
+              ...prev,
+              uploadingState: false,
+              progress: 100,
+              key: Key
+            }));
+            toast.success("File uploaded Successfully");
+            resolve();
+          }
+        };
 
-      
-    } catch (error) {}
+        xhr.onerror = () => {
+          reject(new Error("Upload Failed"));
+        };
+
+        xhr.open("PUT", presignedurl);
+        xhr.setRequestHeader("Content-Type", file.type);
+        xhr.send(file);
+      });
+    } catch (error) {
+      toast.error("something went wrong");
+      setFileState((prev) => ({
+        ...prev,
+        uploadingState: false,
+        progress: 0,
+        error: true
+      }));
+    }
   }
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    if (acceptedFiles.length) {
-      const file = acceptedFiles[0];
+  function renderContent() {
+    if (fileState.uploadingState) {
+      return (
+        <RenderUploadingState
+          progress={fileState.progress}
+          file={fileState.file as File}
+        />
+      );
+    }
 
-      setFileState({
-        id: crypto.randomUUID().substring(10),
-        file,
+    if (fileState.error) {
+      return <RenderErrorState />;
+    }
+
+    if (fileState.objectUrl) {
+      return (
+        <RenderUploadedState
+          previewUrl={fileState.objectUrl}
+          isDeleting={fileState.isDeleteing}
+          handleRemoval={handleRemoveFile}
+        />
+      );
+    }
+
+    return <RenderState isDragActive={isDragActive} />;
+  }
+
+  const onDrop = useCallback(
+    (acceptedFiles: File[]) => {
+      if (acceptedFiles.length) {
+        const file = acceptedFiles[0];
+
+        setFileState({
+          id: crypto.randomUUID().substring(10),
+          file,
+          uploadingState: false,
+          isDeleteing: false,
+          progress: 0,
+          objectUrl: URL.createObjectURL(file),
+          error: false,
+          fileType: "image"
+        });
+
+        uploadFile(file);
+      }
+    },
+    [fileState.objectUrl]
+  );
+
+  async function handleRemoveFile() {
+    if (fileState.isDeleteing || !fileState.objectUrl) return;
+
+    try {
+      setFileState((prev) => ({
+        ...prev,
+        isDeleteing: true
+      }));
+
+      const response = await fetch("/api/s3/delete", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          Key: fileState.key
+        })
+      });
+
+      console.log(response);
+
+      if (!response.ok) {
+        toast.error("Failed to remove file from storage ");
+
+        setFileState((prev) => ({
+          ...prev,
+          isDeleteing: true,
+          error: true
+        }));
+        return;
+      }
+
+      if (fileState.objectUrl && !fileState.objectUrl.startsWith("http")) {
+        URL.revokeObjectURL(fileState.objectUrl);
+      }
+
+      setFileState(() => ({
+        id: null,
+        file: null,
         uploadingState: false,
-        isDeleteing: false,
         progress: 0,
-        objectUrl: URL.createObjectURL(file),
+        isDeleteing: false,
         error: false,
         fileType: "image"
-      });
+      }));
+
+      toast.success("Filed Remvoed succesfully");
+    } catch {
+      toast.error("Error removing file. please try again");
+      setFileState((prev) => ({
+        ...prev,
+        isDeleteing: false,
+        error: true
+      }));
     }
-  }, []);
+  }
 
   function rejectedFiles(fileRejection: FileRejection[]) {
     if (fileRejection.length) {
@@ -97,8 +246,9 @@ const Uploader = () => {
     accept: { "image/*": [] },
     maxFiles: 1,
     multiple: false,
-    maxSize: 5 * 1024 * 1024, // 5MB,
-    onDropRejected: rejectedFiles
+    maxSize: 5 * 1024 * 1024,
+    onDropRejected: rejectedFiles,
+    disabled: fileState.uploadingState || !!fileState.objectUrl
   });
 
   return (
@@ -113,7 +263,7 @@ const Uploader = () => {
     >
       <CardContent className="flex items-center justify-center h-full w-full p-4">
         <input {...getInputProps()} />
-        <RenderState isDragActive={isDragActive} />
+        {renderContent()}
       </CardContent>
     </Card>
   );
