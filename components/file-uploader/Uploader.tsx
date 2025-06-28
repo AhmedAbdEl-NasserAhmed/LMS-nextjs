@@ -143,28 +143,24 @@ const Uploader = ({ value, onChange }: UploaderProps) => {
     return <RenderState isDragActive={isDragActive} />;
   }
 
-  const onDrop = useCallback(
-    (acceptedFiles: File[]) => {
-      if (acceptedFiles.length) {
-        const file = acceptedFiles[0];
+  const onDrop = useCallback((acceptedFiles: File[]) => {
+    if (acceptedFiles.length) {
+      const file = acceptedFiles[0];
 
-        setFileState({
-          id: crypto.randomUUID().substring(10),
-          file,
-          uploadingState: false,
-          isDeleteing: false,
-          progress: 0,
-          objectUrl: URL.createObjectURL(file),
-          error: false,
-          fileType: "image"
-        });
+      setFileState({
+        id: crypto.randomUUID().substring(10),
+        file,
+        uploadingState: false,
+        isDeleteing: false,
+        progress: 0,
+        objectUrl: URL.createObjectURL(file),
+        error: false,
+        fileType: "image"
+      });
 
-        uploadFile(file);
-      }
-    },
-
-    [uploadFile]
-  );
+      uploadFile(file);
+    }
+  }, []);
 
   async function handleRemoveFile() {
     if (fileState.isDeleteing || !fileState.objectUrl) return;
