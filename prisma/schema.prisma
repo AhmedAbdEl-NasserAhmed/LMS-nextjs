@@ -74,7 +74,7 @@ model Verification {
 
 enum CourseLevel {
   Beginner
-  Intermedi
+  Intermediate
   Advanced
 }
 

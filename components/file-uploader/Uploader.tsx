@@ -22,7 +22,12 @@ interface UploaderState {
   fileType: "image" | "video";
 }
 
-const Uploader = () => {
+interface UploaderProps {
+  value?: string;
+  onChange?: (value: string) => void;
+}
+
+const Uploader = ({ value, onChange }: UploaderProps) => {
   const [fileState, setFileState] = useState<UploaderState>({
     id: null,
     file: null,
@@ -30,7 +35,8 @@ const Uploader = () => {
     progress: 0,
     isDeleteing: false,
     error: false,
-    fileType: "image"
+    fileType: "image",
+    key: value
   });
 
   async function uploadFile(file: File) {
@@ -85,6 +91,7 @@ const Uploader = () => {
               progress: 100,
               key: Key
             }));
+            onChange?.(Key);
             toast.success("File uploaded Successfully");
             resolve();
           }
@@ -175,8 +182,6 @@ const Uploader = () => {
         })
       });
 
-      console.log(response);
-
       if (!response.ok) {
         toast.error("Failed to remove file from storage ");
 
@@ -191,6 +196,8 @@ const Uploader = () => {
       if (fileState.objectUrl && !fileState.objectUrl.startsWith("http")) {
         URL.revokeObjectURL(fileState.objectUrl);
       }
+
+      onChange?.("");
 
       setFileState(() => ({
         id: null,

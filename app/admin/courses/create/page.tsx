@@ -35,12 +35,21 @@ import {
   courseStatus
 } from "@/lib/zodSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft, PlusIcon, SparkleIcon } from "lucide-react";
+import { ArrowLeft, Loader2, PlusIcon, SparkleIcon } from "lucide-react";
 import Link from "next/link";
+import { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import slugify from "slugify";
+import { CreateCourse } from "./actions";
+import { tryCatch } from "@/hooks/try-catch";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const CreatCourse = () => {
+  const [isPending, startTransition] = useTransition();
+
+  const router = useRouter();
+
   const {
     formState: { errors }
   } = useForm();
@@ -62,7 +71,24 @@ const CreatCourse = () => {
   });
 
   function onSubmit(values: courseSchemaType) {
-    console.log(values);
+    startTransition(async () => {
+      try {
+        const { data: result, error } = await tryCatch(CreateCourse(values));
+
+        if (error) {
+          toast.error("An expected error occured , please try again");
+          return;
+        }
+
+        if (result.status === "Success") {
+          toast.success(result.message);
+          form.reset();
+          router.push("/admin/courses");
+        } else if (result.status === "Error") {
+          toast.error(result.message);
+        }
+      } catch {}
+    });
   }
 
   return (
@@ -167,7 +193,7 @@ const CreatCourse = () => {
                   <FormItem className="w-full">
                     <FormLabel> Thumbnail Image</FormLabel>
                     <FormControl>
-                      <Uploader />
+                      <Uploader onChange={field.onChange} value={field.value} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -287,8 +313,18 @@ const CreatCourse = () => {
                   </FormItem>
                 )}
               />
-              <Button type="submit">
-                Create Course <PlusIcon className="ml-1" size={16} />
+              <Button type="submit" disabled={isPending}>
+                {isPending ? (
+                  <>
+                    Creating....
+                    <Loader2 className="animate-spin ml-1" />
+                  </>
+                ) : (
+                  <>
+                    Create Course
+                    <PlusIcon className="ml-1" size={16} />
+                  </>
+                )}
               </Button>
             </form>
           </Form>
