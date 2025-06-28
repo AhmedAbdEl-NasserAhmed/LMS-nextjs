@@ -27,6 +27,7 @@ import {
   SelectValue
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { tryCatch } from "@/hooks/try-catch";
 import {
   courseCategories,
   courseLevels,
@@ -37,22 +38,17 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft, Loader2, PlusIcon, SparkleIcon } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import slugify from "slugify";
-import { CreateCourse } from "./actions";
-import { tryCatch } from "@/hooks/try-catch";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { CreateCourse } from "./actions";
 
 const CreatCourse = () => {
   const [isPending, startTransition] = useTransition();
 
   const router = useRouter();
-
-  const {
-    formState: { errors }
-  } = useForm();
 
   const form = useForm<courseSchemaType>({
     resolver: zodResolver(courseSchema),
@@ -87,7 +83,9 @@ const CreatCourse = () => {
         } else if (result.status === "Error") {
           toast.error(result.message);
         }
-      } catch {}
+      } catch {
+        toast.error("Failed to create a course");
+      }
     });
   }
 

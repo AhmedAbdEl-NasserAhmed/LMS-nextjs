@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { FileRejection, useDropzone } from "react-dropzone";
 import { toast } from "sonner";
 import { Card, CardContent } from "../ui/card";
@@ -105,7 +105,7 @@ const Uploader = ({ value, onChange }: UploaderProps) => {
         xhr.setRequestHeader("Content-Type", file.type);
         xhr.send(file);
       });
-    } catch (error) {
+    } catch {
       toast.error("something went wrong");
       setFileState((prev) => ({
         ...prev,
@@ -162,7 +162,8 @@ const Uploader = ({ value, onChange }: UploaderProps) => {
         uploadFile(file);
       }
     },
-    [fileState.objectUrl]
+
+    [uploadFile]
   );
 
   async function handleRemoveFile() {

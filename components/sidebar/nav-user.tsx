@@ -1,12 +1,9 @@
 "use client";
 
 import {
-  IconCreditCard,
   IconDashboard,
   IconDotsVertical,
-  IconLogout,
-  IconNotification,
-  IconUserCircle
+  IconLogout
 } from "@tabler/icons-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -26,10 +23,10 @@ import {
   useSidebar
 } from "@/components/ui/sidebar";
 import { authClient } from "@/lib/auth-client";
-import Link from "next/link";
 import { HomeIcon, Tv2 } from "lucide-react";
-import { toast } from "sonner";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export function NavUser() {
   const router = useRouter();

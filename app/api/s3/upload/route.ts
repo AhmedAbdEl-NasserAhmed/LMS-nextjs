@@ -1,11 +1,10 @@
 import { env } from "@/lib/env";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { NextResponse } from "next/server";
-import { z } from "zod";
 
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { S3 } from "@/lib/S3Client";
 import { fileUploadSchema } from "@/lib/zodSchema";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 export async function POST(request: Request) {
   try {
@@ -36,7 +35,7 @@ export async function POST(request: Request) {
     const response = { presignedurl, Key: uniqueKey };
 
     return NextResponse.json(response);
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: "Failed to generate presignedurl" },
       { status: 400 }

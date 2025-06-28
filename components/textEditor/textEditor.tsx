@@ -3,7 +3,11 @@ import StarterKit from "@tiptap/starter-kit";
 import MenuBar from "./MenuBar";
 import TextAlign from "@tiptap/extension-text-align";
 
-const TextEditor = ({ field }: { field: any }) => {
+const TextEditor = ({
+  field
+}: {
+  field: { onChange: (value: string) => void; value: string };
+}) => {
   const editor = useEditor({
     extensions: [
       StarterKit,
