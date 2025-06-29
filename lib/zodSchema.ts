@@ -10,12 +10,12 @@ export const courseCategories = [
   "Finance",
   "IT & Software",
   "Office Productivity",
-  "Personal Development",
+  "PersonalDevelopment",
   "Design",
   "Marketing",
-  "Health & Fitness",
+  "Health Fitness",
   "Music",
-  "Teaching & Academics"
+  "Teaching Academics"
 ] as const;
 
 export const courseSchema = z.object({
@@ -42,7 +42,7 @@ export const courseSchema = z.object({
   }),
 
   category: z.enum(courseCategories, {
-    message: "Category is required"
+    errorMap: () => ({ message: "Invalid course category" })
   }),
 
   smallDescription: z

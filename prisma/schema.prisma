@@ -90,6 +90,7 @@ enum CourseStatus {
   Archived
 }
 
+
 model Course {
   id               String       @id @default(uuid())
   title            String
@@ -98,7 +99,7 @@ model Course {
   price            Int
   duration         Int
   level            CourseLevel  @default(Beginner)
-  category         String
+  category         String  
   smallDescription String
   slug             String       @unique
   status           CourseStatus @default(Draft)
@@ -106,6 +107,21 @@ model Course {
   User             User?        @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
-  updatedAT DateTime @default(now())
+ updatedAT DateTime @updatedAt
+
+}
+
+
+model Chaper {
+  id String @id @default(uuid())
+  title String
+  position Int
+  createdAt DateTime @default(now())
+  updatedAT DateTime @updatedAt
+}
+
+
+model Lessson {
+  id String @id @default(uuid())
 
 }

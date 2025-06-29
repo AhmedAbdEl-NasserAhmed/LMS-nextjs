@@ -59,7 +59,7 @@ const CreatCourse = () => {
       price: 1,
       duration: 1,
       level: "Beginner",
-      category: "Health & Fitness",
+      category: "Development",
       smallDescription: "",
       slug: "",
       status: "Draft"
