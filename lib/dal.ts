@@ -50,6 +50,23 @@ export async function getAdminCourse(id: string) {
     select: {
       id: true,
       title: true,
+      chapter: {
+        select: {
+          id: true,
+          title: true,
+          position: true,
+          lessons: {
+            select: {
+              id: true,
+              title: true,
+              description: true,
+              thumbnailKey: true,
+              position: true,
+              videoKey: true
+            }
+          }
+        }
+      },
       description: true,
       fileKey: true,
       price: true,
