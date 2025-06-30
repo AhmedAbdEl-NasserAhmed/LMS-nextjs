@@ -104,6 +104,7 @@ model Course {
   slug             String       @unique
   status           CourseStatus @default(Draft)
   userId           String
+  chapter          Chapter[]
   User             User?        @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
@@ -112,16 +113,26 @@ model Course {
 }
 
 
-model Chaper {
+model Chapter {
   id String @id @default(uuid())
   title String
   position Int
   createdAt DateTime @default(now())
   updatedAT DateTime @updatedAt
+  Course    Course    @relation(fields: [courseId], references: [id] )
+  courseId  String
+  lessons Lessson[]
 }
 
 
 model Lessson {
   id String @id @default(uuid())
-
+  title String
+  description String?
+  thumbnailKey String?
+  videoKey String?
+  createdAt DateTime @default(now())
+  updatedAT DateTime @updatedAt
+  Chapter Chapter @relation(fields: [chapterId], references: [id] )
+  chapterId String
 }

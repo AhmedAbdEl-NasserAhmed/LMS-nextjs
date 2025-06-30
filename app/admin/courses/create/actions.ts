@@ -6,7 +6,6 @@ import { prisma } from "@/lib/db";
 import { ApiResponse } from "@/lib/type";
 import { courseSchema, courseSchemaType } from "@/lib/zodSchema";
 import { request } from "@arcjet/next";
-import { NextResponse } from "next/server";
 
 const aj = arcjet
   .withRule(

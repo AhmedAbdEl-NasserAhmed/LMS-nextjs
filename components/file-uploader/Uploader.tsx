@@ -29,7 +29,7 @@ interface UploaderProps {
 }
 
 const Uploader = ({ value, onChange }: UploaderProps) => {
-  const fileUrl = useConstruct(value || "");
+  const fileUrl = useConstruct(value);
 
   const [fileState, setFileState] = useState<UploaderState>({
     id: null,

@@ -32,7 +32,7 @@ const CourseStructure = () => {
     })
   );
 
-  function handleDragEnd(event) {
+  function handleDragEnd(event: any) {
     const { active, over } = event;
 
     if (active.id !== over.id) {

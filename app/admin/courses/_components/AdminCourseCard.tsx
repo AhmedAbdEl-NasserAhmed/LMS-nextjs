@@ -61,7 +61,7 @@ const AdminCourseCard = ({ data }: Props) => {
       </div>
       <Image
         className="w-full rounded-t-lg aspect-ratio h-full object-cover"
-        src={useConstruct(data.fileKey)}
+        src={useConstruct(data.fileKey) as string}
         alt="image"
         width={600}
         height={400}
