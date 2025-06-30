@@ -29,7 +29,7 @@ export async function CreateCourse(
   try {
     const req = await request();
 
-    const decision = await arcjet.protect(req, {
+    const decision = await aj.protect(req, {
       fingerprint: session?.user.id as string
     });
 

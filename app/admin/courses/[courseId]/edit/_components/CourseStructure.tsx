@@ -4,6 +4,7 @@ import { ReactNode, useState } from "react";
 
 import {
   DndContext,
+  DragEndEvent,
   DraggableSyntheticListeners,
   KeyboardSensor,
   PointerSensor,
@@ -57,8 +58,6 @@ const CourseStructure = ({ data }: Props) => {
       }))
     })) || [];
 
-  console.log(initialItems);
-
   const [items, setItems] = useState(initialItems);
 
   const sensors = useSensors(
@@ -68,19 +67,18 @@ const CourseStructure = ({ data }: Props) => {
     })
   );
 
-  function handleDragEnd(event: any) {
+  function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
 
-    if (active.id !== over.id) {
+    if (active.id !== over?.id) {
       setItems((items) => {
-        const oldIndex = items.indexOf(active.id);
-        const newIndex = items.indexOf(over.id);
+        const oldIndex = items.findIndex((item) => item.id === active.id);
+        const newIndex = items.findIndex((item) => item.id === over?.id);
 
         return arrayMove(items, oldIndex, newIndex);
       });
     }
   }
-
   function SortableItem(props: {
     id: string;
     children: (listeners: DraggableSyntheticListeners) => ReactNode;
