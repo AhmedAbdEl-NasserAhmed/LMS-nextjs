@@ -42,19 +42,7 @@ const LoginForm = () => {
 
   function signInWithEmail() {
     startEmailTransition(async () => {
-      await authClient.emailOtp.sendVerificationOtp({
-        email,
-        type: "sign-in",
-        fetchOptions: {
-          onSuccess: () => {
-            toast.success("Email sent");
-            router.push("/");
-          },
-          onError: () => {
-            toast.error("Error Sending Email");
-          }
-        }
-      });
+      router.push("/");
     });
   }
 
