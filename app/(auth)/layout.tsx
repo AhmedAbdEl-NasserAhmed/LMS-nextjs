@@ -22,7 +22,7 @@ const AuthLayout = ({ children }: { children: ReactNode }) => {
           href="/"
           className="flex items-center gap-2 font-medium justify-center"
         >
-          <Image src="/" width={32} height={32} alt="logo" />
+          <Image src="/icon.png" width={32} height={32} alt="logo" />
           LMS
         </Link>
 
