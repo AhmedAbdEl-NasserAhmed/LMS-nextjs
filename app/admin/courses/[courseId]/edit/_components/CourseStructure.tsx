@@ -35,16 +35,15 @@ import {
   ChevronDown,
   ChevronRight,
   FileText,
-  GripVertical,
-  Trash2Icon
+  GripVertical
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { reorderChapter, reorderLesson } from "../actions";
+import DeleteChapter from "./DeleteChapter";
+import DeleteLesson from "./DeleteLesson";
 import NewChapterModal from "./NewChapterModal";
 import NewLessonModal from "./NewLessonModal";
-import DeleteLesson from "./DeleteLesson";
-import DeleteChapter from "./DeleteChapter";
 
 interface Props {
   data: AdminCourseEditType;
