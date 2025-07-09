@@ -43,6 +43,8 @@ import { toast } from "sonner";
 import { reorderChapter, reorderLesson } from "../actions";
 import NewChapterModal from "./NewChapterModal";
 import NewLessonModal from "./NewLessonModal";
+import DeleteLesson from "./DeleteLesson";
+import DeleteChapter from "./DeleteChapter";
 
 interface Props {
   data: AdminCourseEditType;
@@ -339,9 +341,7 @@ const CourseStructure = ({ data }: Props) => {
                             {item.title}
                           </p>
                         </div>
-                        <Button size="icon" variant="outline">
-                          <Trash2Icon className="size-4" />
-                        </Button>
+                        <DeleteChapter courseId={data.id} chapterId={item.id} />
                       </div>
                       <CollapsibleContent>
                         <div className="p-1">
@@ -372,9 +372,11 @@ const CourseStructure = ({ data }: Props) => {
                                         {lesson.title}
                                       </Link>
                                     </div>
-                                    <Button variant="outline" size="icon">
-                                      <Trash2Icon className="size-4" />
-                                    </Button>
+                                    <DeleteLesson
+                                      courseId={data.id}
+                                      chapterId={item.id}
+                                      lessonId={lesson.id}
+                                    />
                                   </div>
                                 )}
                               </SortableItem>
