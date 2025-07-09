@@ -41,6 +41,8 @@ import {
 import Link from "next/link";
 import { toast } from "sonner";
 import { reorderChapter, reorderLesson } from "../actions";
+import NewChapterModal from "./NewChapterModal";
+import NewLessonModal from "./NewLessonModal";
 
 interface Props {
   data: AdminCourseEditType;
@@ -293,6 +295,7 @@ const CourseStructure = ({ data }: Props) => {
       <Card>
         <CardHeader className="flex items-center justify-between flex-row border-b border-border">
           <CardTitle>Chapters</CardTitle>
+          <NewChapterModal courseId={data.id} />
         </CardHeader>
         <CardContent className="space-y-8">
           <SortableContext strategy={verticalListSortingStrategy} items={items}>
@@ -378,13 +381,10 @@ const CourseStructure = ({ data }: Props) => {
                             ))}
                           </SortableContext>
                           <div className="p-2">
-                            <Button
-                              type="button"
-                              variant="outline"
-                              className="w-full"
-                            >
-                              Create New Lesson
-                            </Button>
+                            <NewLessonModal
+                              chapterId={item.id}
+                              courseId={data.id}
+                            />
                           </div>
                         </div>
                       </CollapsibleContent>

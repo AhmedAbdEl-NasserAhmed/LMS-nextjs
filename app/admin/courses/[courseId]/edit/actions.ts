@@ -1,10 +1,17 @@
 "use server";
 
+import arcjet, { detectBot, fixedWindow } from "@/lib/arcjet";
 import { requireAdmin } from "@/lib/dal";
 import { prisma } from "@/lib/db";
 import { ApiResponse } from "@/lib/type";
-import { courseSchema, courseSchemaType } from "@/lib/zodSchema";
-import arcjet, { detectBot, fixedWindow } from "@/lib/arcjet";
+import {
+  chapterSchema,
+  chapterSchemaType,
+  courseSchema,
+  courseSchemaType,
+  lessonSchema,
+  lessonSchemaType
+} from "@/lib/zodSchema";
 import { request } from "@arcjet/next";
 import { revalidatePath } from "next/cache";
 
@@ -153,6 +160,109 @@ export async function reorderChapter(
     return {
       status: "Error",
       message: "Failed to redorder chapters"
+    };
+  }
+}
+
+export async function createChapter(
+  values: chapterSchemaType
+): Promise<ApiResponse> {
+  await requireAdmin();
+  try {
+    const result = chapterSchema.safeParse(values);
+
+    if (!result.data) {
+      return {
+        status: "Error",
+        message: "Invalid Data"
+      };
+    }
+
+    await prisma.$transaction(async (tx) => {
+      const maxPos = tx.chapter.findFirst({
+        where: {
+          courseId: result.data.courseId
+        },
+        select: {
+          position: true
+        },
+        orderBy: {
+          position: "desc"
+        }
+      });
+
+      await tx.chapter.create({
+        data: {
+          title: result.data.name,
+          courseId: result.data.courseId,
+          position: (maxPos?.position ?? 0) + 1
+        }
+      });
+    });
+
+    revalidatePath(`/admin/courses/${result.data.courseId}/edit`);
+
+    return {
+      status: "Success",
+      message: "A new Chapter created successfully"
+    };
+  } catch {
+    return {
+      status: "Error",
+      message: "Failed to create a chapter"
+    };
+  }
+}
+
+export async function createLesson(
+  values: lessonSchemaType
+): Promise<ApiResponse> {
+  await requireAdmin();
+  try {
+    const result = lessonSchema.safeParse(values);
+
+    if (!result.data) {
+      return {
+        status: "Error",
+        message: "Invalid Data"
+      };
+    }
+
+    await prisma.$transaction(async (tx) => {
+      const maxPos = tx.lessson.findFirst({
+        where: {
+          chapterId: result.data.chapterId
+        },
+        select: {
+          position: true
+        },
+        orderBy: {
+          position: "desc"
+        }
+      });
+
+      await tx.lessson.create({
+        data: {
+          title: result.data.name,
+          chapterId: result.data.chapterId,
+          description: result.data.description,
+          thumbnailKey: result.data.thumbnailKey,
+          videoKey: result.data.videoKey,
+          position: (maxPos?.position ?? 0) + 1
+        }
+      });
+    });
+
+    revalidatePath(`/admin/courses/${result.data.courseId}/edit`);
+
+    return {
+      status: "Success",
+      message: "A new Lesson created successfully"
+    };
+  } catch {
+    return {
+      status: "Error",
+      message: "Failed to create a Lesson"
     };
   }
 }

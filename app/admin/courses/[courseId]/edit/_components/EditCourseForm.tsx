@@ -45,8 +45,6 @@ interface Props {
 const EditCourseForm = ({ course }: Props) => {
   const [isPending, startTransition] = useTransition();
 
-  console.log(course);
-
   const router = useRouter();
 
   const form = useForm<courseSchemaType>({
