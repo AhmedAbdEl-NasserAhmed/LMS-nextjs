@@ -42,7 +42,16 @@ const LoginForm = () => {
 
   function signInWithEmail() {
     startEmailTransition(async () => {
-      router.push("/");
+      try {
+        await authClient.signIn.email({
+          email,
+          password: ""
+        });
+        toast.success("Logged in");
+        router.push("/");
+      } catch (err) {
+        toast.error("Login failed");
+      }
     });
   }
 
