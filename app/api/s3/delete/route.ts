@@ -1,6 +1,6 @@
 import arcjet, { detectBot, fixedWindow } from "@/lib/arcjet";
-import { requireAdmin } from "@/lib/dal";
 import { env } from "@/lib/env";
+import { requireAdmin } from "@/lib/data/admin/admin";
 import { S3 } from "@/lib/S3Client";
 import { DeleteObjectCommand } from "@aws-sdk/client-s3";
 

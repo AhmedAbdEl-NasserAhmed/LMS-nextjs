@@ -1,7 +1,7 @@
 "use server";
 
 import arcjet, { detectBot, fixedWindow } from "@/lib/arcjet";
-import { requireAdmin } from "@/lib/dal";
+import { requireAdmin } from "@/lib/data/admin/admin";
 import { prisma } from "@/lib/db";
 import { ApiResponse } from "@/lib/type";
 import {

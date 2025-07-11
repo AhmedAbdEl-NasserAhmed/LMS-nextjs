@@ -1,5 +1,5 @@
 import arcjet, { detectBot, fixedWindow } from "@/lib/arcjet";
-import { requireAdmin } from "@/lib/dal";
+import { requireAdmin } from "@/lib/data/admin/admin";
 import { env } from "@/lib/env";
 import { S3 } from "@/lib/S3Client";
 import { fileUploadSchema } from "@/lib/zodSchema";

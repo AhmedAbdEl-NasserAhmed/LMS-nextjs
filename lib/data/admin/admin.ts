@@ -3,7 +3,7 @@ import "server-only";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
-import { prisma } from "./db";
+import { prisma } from "@/lib/db";
 
 export async function requireAdmin() {
   const session = await auth.api.getSession({

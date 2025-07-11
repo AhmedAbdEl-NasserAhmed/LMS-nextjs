@@ -6,10 +6,10 @@ import {
   CardTitle
 } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getAdminCourse } from "@/lib/dal";
 import { TabsContent } from "@radix-ui/react-tabs";
 import CourseStructure from "./_components/CourseStructure";
 import EditCourseForm from "./_components/EditCourseForm";
+import { getAdminCourse } from "@/lib/data/admin/admin";
 
 type Params = Promise<{ courseId: string }>;
 
