@@ -28,7 +28,6 @@ import {
   CollapsibleContent,
   CollapsibleTrigger
 } from "@/components/ui/collapsible";
-import { AdminCourseEditType } from "@/lib/dal";
 import { cn } from "@/lib/utils";
 import { CSS } from "@dnd-kit/utilities";
 import {
@@ -44,6 +43,7 @@ import DeleteChapter from "./DeleteChapter";
 import DeleteLesson from "./DeleteLesson";
 import NewChapterModal from "./NewChapterModal";
 import NewLessonModal from "./NewLessonModal";
+import { AdminCourseEditType } from "@/lib/data/admin/admin";
 
 interface Props {
   data: AdminCourseEditType;

@@ -36,7 +36,7 @@ import slugify from "slugify";
 import { editCourse } from "../actions";
 import { tryCatch } from "@/hooks/try-catch";
 import { toast } from "sonner";
-import { AdminCourseEditType } from "@/lib/dal";
+import { AdminCourseEditType } from "@/lib/data/admin/admin";
 
 interface Props {
   course: AdminCourseEditType;
@@ -168,7 +168,11 @@ const EditCourseForm = ({ course }: Props) => {
             <FormItem className="w-full">
               <FormLabel> Thumbnail Image</FormLabel>
               <FormControl>
-                <Uploader onChange={field.onChange} value={field.value} />
+                <Uploader
+                  fileTypeAccepted="image"
+                  onChange={field.onChange}
+                  value={field.value}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

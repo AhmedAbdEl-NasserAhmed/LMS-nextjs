@@ -191,7 +191,11 @@ const CreatCourse = () => {
                   <FormItem className="w-full">
                     <FormLabel> Thumbnail Image</FormLabel>
                     <FormControl>
-                      <Uploader onChange={field.onChange} value={field.value} />
+                      <Uploader
+                        fileTypeAccepted="image"
+                        onChange={field.onChange}
+                        value={field.value}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

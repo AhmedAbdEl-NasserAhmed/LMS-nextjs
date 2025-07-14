@@ -49,7 +49,7 @@ const LoginForm = () => {
         });
         toast.success("Logged in");
         router.push("/");
-      } catch (err) {
+      } catch {
         toast.error("Login failed");
       }
     });

@@ -26,9 +26,10 @@ interface UploaderState {
 interface UploaderProps {
   value?: string;
   onChange?: (value: string) => void;
+  fileTypeAccepted: "image" | "video";
 }
 
-const Uploader = ({ value, onChange }: UploaderProps) => {
+const Uploader = ({ value, onChange, fileTypeAccepted }: UploaderProps) => {
   const fileUrl = useConstruct(value);
 
   const [fileState, setFileState] = useState<UploaderState>({
@@ -38,9 +39,9 @@ const Uploader = ({ value, onChange }: UploaderProps) => {
     progress: 0,
     isDeleteing: false,
     error: false,
-    fileType: "image",
+    fileType: fileTypeAccepted,
     key: value,
-    objectUrl: fileUrl
+    objectUrl: value ? fileUrl : undefined
   });
 
   async function uploadFile(file: File) {
@@ -58,7 +59,7 @@ const Uploader = ({ value, onChange }: UploaderProps) => {
           fileName: file.name,
           contentType: file.type,
           size: file.size,
-          isImage: true
+          isImage: fileTypeAccepted === "image" ? true : false
         })
       });
 
@@ -77,6 +78,7 @@ const Uploader = ({ value, onChange }: UploaderProps) => {
 
       await new Promise<void>((resolve, reject) => {
         const xhr = new XMLHttpRequest();
+
         xhr.upload.onprogress = (event) => {
           if (event.lengthComputable) {
             const perecentageCompleted = (event.loaded / event.total) * 100;
@@ -137,6 +139,7 @@ const Uploader = ({ value, onChange }: UploaderProps) => {
     if (fileState.objectUrl) {
       return (
         <RenderUploadedState
+          fileType={fileState.fileType}
           previewUrl={fileState.objectUrl}
           isDeleting={fileState.isDeleteing}
           handleRemoval={handleRemoveFile}
@@ -147,24 +150,27 @@ const Uploader = ({ value, onChange }: UploaderProps) => {
     return <RenderState isDragActive={isDragActive} />;
   }
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    if (acceptedFiles.length) {
-      const file = acceptedFiles[0];
+  const onDrop = useCallback(
+    (acceptedFiles: File[]) => {
+      if (acceptedFiles.length) {
+        const file = acceptedFiles[0];
 
-      setFileState({
-        id: crypto.randomUUID().substring(10),
-        file,
-        uploadingState: false,
-        isDeleteing: false,
-        progress: 0,
-        objectUrl: URL.createObjectURL(file),
-        error: false,
-        fileType: "image"
-      });
+        setFileState({
+          id: crypto.randomUUID().substring(10),
+          file,
+          uploadingState: false,
+          isDeleteing: false,
+          progress: 0,
+          objectUrl: URL.createObjectURL(file),
+          error: false,
+          fileType: fileTypeAccepted
+        });
 
-      uploadFile(file);
-    }
-  }, []);
+        uploadFile(file);
+      }
+    },
+    [uploadFile, fileTypeAccepted]
+  );
 
   async function handleRemoveFile() {
     if (fileState.isDeleteing || !fileState.objectUrl) return;
@@ -207,7 +213,7 @@ const Uploader = ({ value, onChange }: UploaderProps) => {
         progress: 0,
         isDeleteing: false,
         error: false,
-        fileType: "image"
+        fileType: fileTypeAccepted
       }));
 
       toast.success("Filed Remvoed succesfully");
@@ -251,10 +257,12 @@ const Uploader = ({ value, onChange }: UploaderProps) => {
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: { "image/*": [] },
+    accept:
+      fileTypeAccepted === "video" ? { "video/*": [] } : { "image/*": [] },
     maxFiles: 1,
     multiple: false,
-    maxSize: 5 * 1024 * 1024,
+    maxSize:
+      fileTypeAccepted === "image" ? 5 * 1024 * 1024 : 5000 * 1024 * 1024,
     onDropRejected: rejectedFiles,
     disabled: fileState.uploadingState || !!fileState.objectUrl
   });

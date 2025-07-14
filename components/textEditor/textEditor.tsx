@@ -27,7 +27,13 @@ const TextEditor = ({
 
     immediatelyRender: false,
 
-    content: field.value ? JSON.parse(field.value) : "<p>Hello world 🚀 </p>"
+    content: (() => {
+      try {
+        return field.value ? JSON.parse(field.value) : "<p>Hello world 🚀 </p>";
+      } catch {
+        return "<p>Hello world 🚀 </p>";
+      }
+    })()
   });
 
   return (

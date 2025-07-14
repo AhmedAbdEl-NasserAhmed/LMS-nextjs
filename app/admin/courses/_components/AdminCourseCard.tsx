@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { useConstruct } from "@/hooks/use-construct-url";
-import { AdminCourseType } from "@/lib/dal";
+import { AdminCourseType } from "@/lib/data/admin/admin";
 
 import {
   ArrowRight,
