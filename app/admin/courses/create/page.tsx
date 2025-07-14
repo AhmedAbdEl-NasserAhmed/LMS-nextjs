@@ -44,9 +44,12 @@ import { useForm } from "react-hook-form";
 import slugify from "slugify";
 import { toast } from "sonner";
 import { CreateCourse } from "./actions";
+import useConfetti from "@/hooks/use-confetti";
 
 const CreatCourse = () => {
   const [isPending, startTransition] = useTransition();
+
+  const { triggerConfetti } = useConfetti();
 
   const router = useRouter();
 
@@ -78,6 +81,7 @@ const CreatCourse = () => {
 
         if (result.status === "Success") {
           toast.success(result.message);
+          triggerConfetti();
           form.reset();
           router.push("/admin/courses");
         } else if (result.status === "Error") {
