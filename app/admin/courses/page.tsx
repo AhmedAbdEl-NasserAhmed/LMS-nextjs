@@ -1,6 +1,8 @@
 import { buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
-import AdminCourseCard from "./_components/AdminCourseCard";
+import AdminCourseCard, {
+  AdminCourseCardSkeleton
+} from "./_components/AdminCourseCard";
 import { getAdminCourses } from "@/lib/data/admin/admin";
 import EmptyState from "@/components/general/EmptyState";
 import { Suspense } from "react";
@@ -14,7 +16,7 @@ const CoursesPage = () => {
           Create Course
         </Link>
       </div>
-      <Suspense fallback="loading........">
+      <Suspense fallback={<AdminCourseCardSkeletonLayout />}>
         <RenderCourses />
       </Suspense>
     </>
@@ -41,6 +43,16 @@ async function RenderCourses() {
         </div>
       )}
     </>
+  );
+}
+
+function AdminCourseCardSkeletonLayout() {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 gap-7 ">
+      {Array.from({ length: 4 }).map((_, index) => (
+        <AdminCourseCardSkeleton key={index} />
+      ))}
+    </div>
   );
 }
 
