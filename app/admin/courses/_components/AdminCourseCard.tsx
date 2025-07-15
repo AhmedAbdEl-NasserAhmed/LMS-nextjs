@@ -113,7 +113,7 @@ export function AdminCourseCardSkeleton() {
         <Skeleton className="h-[250px] w-full aspect-video rounded-t-lg object-cover" />
       </div>
       <CardContent className="p-4">
-        <Skeleton className="h-6 w-3/4 mb-2 rounded" /> 
+        <Skeleton className="h-6 w-3/4 mb-2 rounded" />
         <Skeleton className="h-4 w-full mb-4 rounded" />
         <div className="mt-4 flex items-center gap-x-5">
           <div className="flex items-center gap-x-2">

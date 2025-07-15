@@ -1,7 +1,7 @@
 "use client";
 
 import Uploader from "@/components/file-uploader/Uploader";
-import TextEditor from "@/components/textEditor/textEditor";
+import TextEditor from "@/components/textEditor/TextEditor";
 import { Button } from "@/components/ui/button";
 import {
   Form,
