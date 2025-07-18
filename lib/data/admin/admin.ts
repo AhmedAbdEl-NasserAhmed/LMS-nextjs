@@ -107,3 +107,28 @@ export async function adminGetLesson(id: string) {
 }
 
 export type AdminLessonType = Awaited<ReturnType<typeof adminGetLesson>>;
+
+export async function getAdminDashboardStats() {
+  await requireAdmin();
+
+  const [totalSignups, totalCustomers, totalCourses, totalLessons] =
+    await Promise.all([
+      prisma.user.count(),
+      prisma.user.count({
+        where: {
+          courses: {
+            some: {}
+          }
+        }
+      }),
+      prisma.course.count(),
+      prisma.lessson.count()
+    ]);
+
+  return {
+    totalSignups,
+    totalCustomers,
+    totalCourses,
+    totalLessons
+  };
+}
