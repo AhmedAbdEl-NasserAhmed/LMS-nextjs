@@ -132,3 +132,28 @@ export async function getAdminDashboardStats() {
     totalLessons
   };
 }
+
+export async function getAdminRecentCourses() {
+  const data = await prisma.course.findMany({
+    orderBy: {
+      createdAt: "desc"
+    },
+    take: 2,
+    select: {
+      id: true,
+      title: true,
+      smallDescription: true,
+      description: true,
+      duration: true,
+      level: true,
+      status: true,
+      price: true,
+      fileKey: true,
+      slug: true
+    }
+  });
+
+  if (!data) return notFound();
+
+  return data;
+}

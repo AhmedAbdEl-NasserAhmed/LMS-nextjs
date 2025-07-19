@@ -111,7 +111,8 @@ const Uploader = ({ value, onChange, fileTypeAccepted }: UploaderProps) => {
         xhr.setRequestHeader("Content-Type", file.type);
         xhr.send(file);
       });
-    } catch {
+    } catch (err) {
+      console.log(err);
       toast.error("something went wrong");
       setFileState((prev) => ({
         ...prev,

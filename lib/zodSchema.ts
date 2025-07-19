@@ -84,6 +84,30 @@ export const lessonSchema = z.object({
   videoKey: z.string().optional()
 });
 
+export const userSignUpSchema = z
+  .object({
+    email: z.string().email({ message: "Invalid email address" }),
+
+    password: z
+      .string()
+      .min(8, { message: "Password must be at least 8 characters long" })
+      .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/, {
+        message:
+          "Password must include at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character"
+      }),
+
+    confirmPassword: z.string(),
+
+    name: z.string().min(1, { message: "Name is required" }),
+
+    userImage: z.string()
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"] // error will show under the confirmPassword field
+  });
+
 export type courseSchemaType = z.infer<typeof courseSchema>;
 export type chapterSchemaType = z.infer<typeof chapterSchema>;
 export type lessonSchemaType = z.infer<typeof lessonSchema>;
+export type signupUserType = z.infer<typeof userSignUpSchema>;

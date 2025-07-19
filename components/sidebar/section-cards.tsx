@@ -30,7 +30,6 @@ export async function SectionCards() {
           </div>
           <IconUser className="size-6 text-muted-foreground" />
         </CardHeader>
-        <IconBook className="size-6 text-muted-foreground" />
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
           <p className="text-muted-foreground">Registered users on platfrom</p>
         </CardFooter>

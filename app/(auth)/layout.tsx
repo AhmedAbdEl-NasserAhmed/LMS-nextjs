@@ -6,7 +6,7 @@ import { ReactNode } from "react";
 
 const AuthLayout = ({ children }: { children: ReactNode }) => {
   return (
-    <div className="relative h-[100vh] flex flex-col items-center justify-center">
+    <div className="relative p-8 min-h-[100vh] flex flex-col items-center justify-center">
       <Link
         href="/"
         className={buttonVariants({

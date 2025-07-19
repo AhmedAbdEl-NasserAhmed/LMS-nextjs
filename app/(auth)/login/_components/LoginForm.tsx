@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { authClient } from "@/lib/auth-client";
 import { GithubIcon, Loader, Loader2, Send } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
@@ -22,6 +23,7 @@ const LoginForm = () => {
   const [isPending, startTransition] = useTransition();
   const [emailPending, startEmailTransition] = useTransition();
   const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
 
   function signInWithGithub() {
     startTransition(async () => {
@@ -45,7 +47,7 @@ const LoginForm = () => {
       try {
         await authClient.signIn.email({
           email,
-          password: ""
+          password
         });
         toast.success("Logged in");
         router.push("/");
@@ -99,6 +101,16 @@ const LoginForm = () => {
               required
             />
           </div>
+          <div className="grid gap-2">
+            <Label htmlFor="password">Password</Label>
+            <Input
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              type="password"
+              placeholder="write your password"
+              required
+            />
+          </div>
           <Button onClick={signInWithEmail} disabled={emailPending}>
             {emailPending ? (
               <>
@@ -112,6 +124,14 @@ const LoginForm = () => {
               </>
             )}
           </Button>
+          <Link
+            href="./login/signup"
+            className={buttonVariants({
+              variant: "outline"
+            })}
+          >
+            Sign Up
+          </Link>
         </div>
       </CardContent>
     </Card>
