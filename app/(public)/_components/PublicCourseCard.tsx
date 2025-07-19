@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
-import { Card, CardContent, CardDescription } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useConstruct } from "@/hooks/use-construct-url";
 import { PublicCourseType } from "@/lib/data/course/get-all-courses";

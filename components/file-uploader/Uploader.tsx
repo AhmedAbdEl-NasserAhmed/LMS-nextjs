@@ -44,85 +44,6 @@ const Uploader = ({ value, onChange, fileTypeAccepted }: UploaderProps) => {
     objectUrl: value ? fileUrl : undefined
   });
 
-  async function uploadFile(file: File) {
-    setFileState((prev) => ({
-      ...prev,
-      uploadingState: true,
-      progress: 0
-    }));
-
-    try {
-      const preSignedResponse = await fetch("/api/s3/upload", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          fileName: file.name,
-          contentType: file.type,
-          size: file.size,
-          isImage: fileTypeAccepted === "image" ? true : false
-        })
-      });
-
-      if (!preSignedResponse.ok) {
-        toast.error("Failed to get presigned URL");
-        setFileState((prev) => ({
-          ...prev,
-          uploadingState: false,
-          error: true,
-          progress: 0
-        }));
-        return;
-      }
-
-      const { Key, presignedurl } = await preSignedResponse.json();
-
-      await new Promise<void>((resolve, reject) => {
-        const xhr = new XMLHttpRequest();
-
-        xhr.upload.onprogress = (event) => {
-          if (event.lengthComputable) {
-            const perecentageCompleted = (event.loaded / event.total) * 100;
-            setFileState((prev) => ({
-              ...prev,
-              uploadingState: true,
-              progress: Math.round(perecentageCompleted)
-            }));
-          }
-        };
-        xhr.onload = () => {
-          if (xhr.status === 200 || xhr.status === 204) {
-            setFileState((prev) => ({
-              ...prev,
-              uploadingState: false,
-              progress: 100,
-              key: Key
-            }));
-            onChange?.(Key);
-            toast.success("File uploaded Successfully");
-            resolve();
-          }
-        };
-
-        xhr.onerror = () => {
-          reject(new Error("Upload Failed"));
-        };
-
-        xhr.open("PUT", presignedurl);
-        xhr.setRequestHeader("Content-Type", file.type);
-        xhr.send(file);
-      });
-    } catch (err) {
-      console.log(err);
-      toast.error("something went wrong");
-      setFileState((prev) => ({
-        ...prev,
-        uploadingState: false,
-        progress: 0,
-        error: true
-      }));
-    }
-  }
-
   function renderContent() {
     if (fileState.uploadingState) {
       return (
@@ -156,6 +77,85 @@ const Uploader = ({ value, onChange, fileTypeAccepted }: UploaderProps) => {
       if (acceptedFiles.length) {
         const file = acceptedFiles[0];
 
+        async function uploadFile(file: File) {
+          setFileState((prev) => ({
+            ...prev,
+            uploadingState: true,
+            progress: 0
+          }));
+
+          try {
+            const preSignedResponse = await fetch("/api/s3/upload", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                fileName: file.name,
+                contentType: file.type,
+                size: file.size,
+                isImage: fileTypeAccepted === "image" ? true : false
+              })
+            });
+
+            if (!preSignedResponse.ok) {
+              toast.error("Failed to get presigned URL");
+              setFileState((prev) => ({
+                ...prev,
+                uploadingState: false,
+                error: true,
+                progress: 0
+              }));
+              return;
+            }
+
+            const { Key, presignedurl } = await preSignedResponse.json();
+
+            await new Promise<void>((resolve, reject) => {
+              const xhr = new XMLHttpRequest();
+
+              xhr.upload.onprogress = (event) => {
+                if (event.lengthComputable) {
+                  const perecentageCompleted =
+                    (event.loaded / event.total) * 100;
+                  setFileState((prev) => ({
+                    ...prev,
+                    uploadingState: true,
+                    progress: Math.round(perecentageCompleted)
+                  }));
+                }
+              };
+              xhr.onload = () => {
+                if (xhr.status === 200 || xhr.status === 204) {
+                  setFileState((prev) => ({
+                    ...prev,
+                    uploadingState: false,
+                    progress: 100,
+                    key: Key
+                  }));
+                  onChange?.(Key);
+                  toast.success("File uploaded Successfully");
+                  resolve();
+                }
+              };
+
+              xhr.onerror = () => {
+                reject(new Error("Upload Failed"));
+              };
+
+              xhr.open("PUT", presignedurl);
+              xhr.setRequestHeader("Content-Type", file.type);
+              xhr.send(file);
+            });
+          } catch {
+            toast.error("something went wrong");
+            setFileState((prev) => ({
+              ...prev,
+              uploadingState: false,
+              progress: 0,
+              error: true
+            }));
+          }
+        }
+
         setFileState({
           id: crypto.randomUUID().substring(10),
           file,
@@ -170,7 +170,7 @@ const Uploader = ({ value, onChange, fileTypeAccepted }: UploaderProps) => {
         uploadFile(file);
       }
     },
-    [uploadFile, fileTypeAccepted]
+    [fileTypeAccepted, onChange]
   );
 
   async function handleRemoveFile() {
