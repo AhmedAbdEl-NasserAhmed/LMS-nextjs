@@ -4,6 +4,8 @@ import PublicCourseCard, {
   PublicCourseCardSkeleton
 } from "../_components/PublicCourseCard";
 
+export const dynamic = "force-dynamic";
+
 const PublicCoursesRoute = () => {
   return (
     <div className="mt-5">
