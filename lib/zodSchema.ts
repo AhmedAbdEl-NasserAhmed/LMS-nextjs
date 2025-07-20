@@ -98,9 +98,9 @@ export const userSignUpSchema = z
 
     confirmPassword: z.string(),
 
-    name: z.string().min(1, { message: "Name is required" }),
+    name: z.string().min(1, { message: "Name is required" })
 
-    userImage: z.string()
+    // userImage: z.string()
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",

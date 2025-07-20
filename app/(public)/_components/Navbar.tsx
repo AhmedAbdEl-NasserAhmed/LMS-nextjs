@@ -14,6 +14,7 @@ const navigationItems = [
 
 export function Navbar() {
   const { data: session, isPending } = authClient.useSession();
+  
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur-[backdrop-filter]:bg-background/60">

@@ -57,7 +57,7 @@ const SignUpPage = () => {
             onSubmit={form.handleSubmit(handleSubmit)}
             className="flex flex-col gap-y-6"
           >
-            <FormField
+            {/* <FormField
               control={form.control}
               name="userImage"
               render={({ field }) => (
@@ -73,7 +73,7 @@ const SignUpPage = () => {
                   <FormMessage />
                 </FormItem>
               )}
-            />
+            /> */}
             <FormField
               control={form.control}
               name="name"
