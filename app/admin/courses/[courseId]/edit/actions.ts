@@ -179,7 +179,7 @@ export async function createChapter(
     }
 
     await prisma.$transaction(async (tx) => {
-      const maxPos = tx.chapter.findFirst({
+      const maxPos = await tx.chapter.findFirst({
         where: {
           courseId: result.data.courseId
         },
@@ -229,7 +229,7 @@ export async function createLesson(
     }
 
     await prisma.$transaction(async (tx) => {
-      const maxPos = tx.lessson.findFirst({
+      const maxPos = await tx.lessson.findFirst({
         where: {
           chapterId: result.data.chapterId
         },
