@@ -29,8 +29,6 @@ const SignUpPage = () => {
     resolver: zodResolver(userSignUpSchema)
   });
 
-  console.log(form.watch());
-
   async function handleSubmit(values: signupUserType) {
     startTransition(async () => {
       await authClient.signUp.email(
